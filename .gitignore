@@ -1,0 +1,10 @@
+# Données volumineuses et caches
+data/raw/*.csv
+data/processed/*.csv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+outputs/figures/*.png
+outputs/tables/*.csv
+.env

@@ -20,6 +20,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from src.panier_survie import compute_survival_basket
+
 
 # =============================================================================
 # 1. Page configuration
@@ -534,8 +536,19 @@ def load_market_dataset():
             data.index = pd.to_datetime(data.index)
             return data.sort_index(), str(path)
 
-    st.error(t["dataset_missing"])
-    st.stop()
+    try:
+        generated = compute_survival_basket()
+        output_path = Path("outputs/tables/cout_mensuel_panier_survie.csv")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        generated.round(0).to_csv(output_path)
+
+        data = pd.read_csv(output_path, index_col=0)
+        data.index = pd.to_datetime(data.index)
+        return data.sort_index(), str(output_path)
+    except Exception as exc:
+        st.error(t["dataset_missing"])
+        st.error(f"Génération automatique impossible : {exc}")
+        st.stop()
 
 
 df_base, source_label = load_market_dataset()
